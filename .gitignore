@@ -1,0 +1,21 @@
+# 运行期产物（不要提交）
+soak-status.log
+soak-latest.txt
+*.log
+*.ubi
+*.bin
+*.itb
+*.dtb
+atf/
+
+# 本地凭据 / 环境
+.env
+*.password
+secrets.*
+
+# 系统与编辑器
+Thumbs.db
+desktop.ini
+.DS_Store
+.vscode/
+.idea/

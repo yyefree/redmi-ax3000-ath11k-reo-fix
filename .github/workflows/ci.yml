@@ -1,0 +1,32 @@
+name: lint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  shell:
+    name: shell syntax
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Syntax check POSIX sh scripts
+        run: |
+          for f in scripts/*.sh; do
+            echo "== $f"
+            sh -n "$f"
+          done
+      - name: ShellCheck (informational)
+        continue-on-error: true
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq shellcheck
+          shellcheck -S warning scripts/*.sh || true
+
+  patch:
+    name: DTS patch structure
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: reo2host-status=334 / host2tcl-input-ring2=312
+        run: python3 tools/verify-patch.py

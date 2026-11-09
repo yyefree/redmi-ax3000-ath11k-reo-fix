@@ -1,0 +1,30 @@
+From: reo2host-status IRQ mapping fix <noreply@example.com>
+Subject: [PATCH] ipq5018: swap reo2host-status and host2tcl-input-ring2 SPI numbers
+
+Upstream reference: openwrt/openwrt#21264, PR #21271.
+The reo2host-status interrupt of wifi@c000000 is wired to GIC_SPI 312, a line
+with no source on IPQ5018: /proc/interrupts shows it stuck at count 0 forever,
+so the REO status ring is never reaped and REO commands start failing with -105.
+Swap it with host2tcl-input-ring2 (GIC_SPI 334), exactly as upstream does.
+
+Apply to: target/linux/qualcommax/patches-6.6/2815-arm64-dts-qcom-ipq5018-add-wifi-support.patch
+--- a/2815-arm64-dts-qcom-ipq5018-add-wifi-support.patch
++++ b/2815-arm64-dts-qcom-ipq5018-add-wifi-support.patch
+@@ -85,7 +85,7 @@ index 7de17bca96cb..ff9d7b14a333 100644
+ +				<GIC_SPI 309 IRQ_TYPE_EDGE_RISING>,
+ +				<GIC_SPI 310 IRQ_TYPE_EDGE_RISING>,
+ +				<GIC_SPI 311 IRQ_TYPE_EDGE_RISING>,
+-+				<GIC_SPI 312 IRQ_TYPE_EDGE_RISING>,
+++				<GIC_SPI 334 IRQ_TYPE_EDGE_RISING>,
+ +				<GIC_SPI 313 IRQ_TYPE_EDGE_RISING>,
+ +				<GIC_SPI 314 IRQ_TYPE_EDGE_RISING>,
+ +				<GIC_SPI 315 IRQ_TYPE_EDGE_RISING>,
+@@ -107,7 +107,7 @@ index 7de17bca96cb..ff9d7b14a333 100644
+ +				<GIC_SPI 331 IRQ_TYPE_EDGE_RISING>,
+ +				<GIC_SPI 332 IRQ_TYPE_EDGE_RISING>,
+ +				<GIC_SPI 333 IRQ_TYPE_EDGE_RISING>,
+-+				<GIC_SPI 334 IRQ_TYPE_EDGE_RISING>,
+++				<GIC_SPI 312 IRQ_TYPE_EDGE_RISING>,
+ +				<GIC_SPI 335 IRQ_TYPE_EDGE_RISING>,
+ +				<GIC_SPI 336 IRQ_TYPE_EDGE_RISING>,
+ +				<GIC_SPI 337 IRQ_TYPE_EDGE_RISING>,

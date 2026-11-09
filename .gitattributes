@@ -1,0 +1,9 @@
+# 统一换行：脚本、补丁、源码一律 LF（Windows 上 Git 默认会转 CRLF，会让 sh 和 patch 失效）
+* text=auto eol=lf
+*.sh   text eol=lf
+*.patch text eol=lf
+*.diff text eol=lf
+*.py    text eol=lf
+*.ps1   text eol=lf
+*.md    text eol=lf
+*.yml   text eol=lf
