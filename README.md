@@ -111,7 +111,17 @@ $ grep reo2host-status /proc/interrupts
 
 ### 许可
 
-MIT，见 `LICENSE`。脚本与文档按现状提供，刷机有变砖风险，后果自负。
+GPL-2.0（全文见 `LICENSE`），与 OpenWrt 生态一致；`patches/` 里的 DTS 改动本身源自
+上游 openwrt PR #21271 的写法，按上游同样条款使用。脚本与文档按现状提供，刷机有
+变砖风险，后果自负。
+
+Copyright (C) 2026 yyefree
+
+### 长跑记录与上游反馈
+
+- `docs/06-soak-report.md` — 逐小时巡检数据与判定进展（目前进行中）
+- `docs/07-upstream-comment.md` — 给 openwrt#22583 的回帖草稿（**尚未发布**，
+  等 72 小时数据齐了再发）
 
 ---
 
@@ -140,4 +150,7 @@ and tooling to tell whether the fix actually holds over 48–72 hours.
 openwrt#22583 reports the same symptom persisting for another model after this
 patch, so treat it as a well-evidenced candidate fix, not a proven one.
 
-MIT licensed.
+GPL-2.0 licensed (see `LICENSE`), matching the OpenWrt ecosystem.
+
+- `docs/06-soak-report.md` — hourly soak data, in progress
+- `docs/07-upstream-comment.md` — draft reply for openwrt#22583 (**not posted yet**)
