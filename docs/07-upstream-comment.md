@@ -1,9 +1,16 @@
 # 07 · 给 openwrt#22583 的回帖（草稿，尚未发布）
 
-> **状态：未发布。** 等 2026-11-12 21:56 的 72 小时节点数据齐了再发。
-> 现在发只会变成“又一个人说有效/无效”，对维护者没有增量价值。
+> **状态：未发布。**
+>
+> 原计划等 2026-11-12 21:56 的 72 小时节点数据齐了再发。但 2026-11-10 18:07 之后
+> 按用户要求停止了每小时巡检，自动取证止于 **T+20h11m**，48 h / 72 h 窗口没有数据。
+> 现在贴出去只是“20 小时未见复现”，对维护者增量有限，故压着不发。
 >
 > 发布方式：`gh issue comment 22583 --repo openwrt/openwrt --body-file <此文件正文>`
+>
+> **发布前必须先补一次测量**：手动跑 `monitor-ax3000.ps1`，确认 uptime 连续
+> （= 中间没崩、没回滚）、`HAL_REO` 累计仍为 0，再把这一行写进正文 soak 段，
+> 把 "20 h" 换成真实值。下面的正文已按 T+20h 更新，直接可用。
 
 ---
 
@@ -33,24 +40,28 @@ Before the change
 
 After the change
   $ grep reo2host-status /proc/interrupts
-   52:         61  GIC-0  366  Edge  reo2host-status      <- 366 == 32 + 334, and it counts
+   52:        189  GIC-0  366  Edge  reo2host-status      <- 366 == 32 + 334, and it counts
   $ dmesg | grep -c HAL_REO
    0
   reo2host-destination-ring1 continued to grow normally throughout
-  (2709 -> 50815 over the same window), so the RX path was genuinely busy.
+  (2709 -> 61714 over the same window), so the RX path was genuinely busy.
 
-Soak so far (boot 2026-11-09 21:56 CST)
-  T+9h05m: HAL_REO 0, 2.4G on ch11, both AP interfaces up, no rollback.
-  Interrupt count: 29 (at init) -> 35 -> 37 -> 61, i.e. a few discrete events,
-  NOT anywhere near per-packet. That matches "this status ring only fires on
-  a handful of conditions", so it does not by itself prove that every REO
-  status entry is now reaped.
-  Notable: the 37 -> 61 step at 05:00 happened in the same 10-minute window
-  as a +1048 jump on ring1, with zero -105 in dmesg.
+Soak (boot 2026-11-09 21:56 CST, 21 hourly samples up to T+20h11m)
+  HAL_REO 0 in all 21 samples; 2.4G on ch11; both AP interfaces up;
+  booted from ubi.mtd=rootfs the whole time, no rollback.
+  Interrupt count: 29 (at init) -> 35 -> 37 -> 61 -> 75 -> 84 -> 182 -> 189,
+  i.e. a few discrete steps, NOT anywhere near per-packet. That matches
+  "this status ring only fires on a handful of conditions", so it does not
+  by itself prove that every REO status entry is now reaped.
+  Two steps worth noting:
+   - 05:00  37 -> 61 with a +1048 jump on ring1 in the same 10 min, zero -105.
+   - 08:00  ring1 +3409 in one hour, interrupts 61 -> 68 -> 75, zero -105.
+   - 14:10  84 -> 182 (+98) while ring1 only +249, i.e. NOT load driven.
+     I have no explanation for that one yet and I am not hiding it.
 
-Caveat: 9 hours is nothing. Historically this bug shows up after hours of
-uptime and specific load, so I am not claiming it is fixed. I will report back
-at T+72h (2026-11-12 21:56 CST) either way, including a negative result.
+Caveat: 20 hours is not 72. Historically this bug shows up after hours of
+uptime and specific load, and issue #22583 has a report that the same fix
+still reproduces. So this is a data point, not a claim that it is fixed.
 
 Reproducible recipe (patch + ImageBuilder steps + the three dual-slot
 rollback prerequisites that are easy to miss on this device):
@@ -59,8 +70,9 @@ https://github.com/yyefree/redmi-ax3000-ath11k-reo-fix
 
 ## 发布前的检查清单
 
-- [ ] 72 小时窗口跑满，`HAL_REO` 累计仍为 0（或如实写复现数据）
-- [ ] `docs/06-soak-report.md` 已补齐 T+72h 那几行
+- [x] 正文数据已更新到最后一轮采样（T+20h11m，21 个点）
+- [ ] 发布前补一次手动测量，把 soak 段的时长改成发布时的真实 uptime
+- [ ] 48 h / 72 h 窗口未跑满这一点已在正文里如实写明（不要删掉这句）
 - [ ] 补上刷入前后的 `/proc/interrupts` 完整对照（含 344 与 366 两行原始输出）
 - [ ] 仓库 README 顶部的“Status”一段与新数据一致（不留旧结论）
 - [ ] 检查没有把个人网络信息（SSID、密码、MAC、公网 IP）带进回帖

@@ -61,11 +61,12 @@ $ grep reo2host-status /proc/interrupts
 | 2.4 GHz | 偶发失效，需重启 | 正常，ch11，实测 26–46 Mbps 内网吞吐 |
 | 启动槽 | — | 新槽 `ubi.mtd=rootfs`，启动标志正常 |
 
-**这不是“已断根”的结论。** 本机只连续跑了约 8 小时零报错，而这类故障历史上常
-在跑数小时、遇到特定负载之后才爆。仓库里 `docs/04-verification.md` 写了判定标准
-（48–72 小时零报错）与这次仍存在的反向证据：上游 issue #22583（GL-B3000 同症状）
-中有开发者称打完同样的中断修正**仍然复现**。所以本仓库给出的是“一个证据充分的
-候选修复 + 可复现的构建方法和验证方法”，不是“上游已盖章的终极答案”。
+**这不是“已断根”的结论。** 本机连续跑满 20 小时 11 分（21 轮巡检）零报错，采集在此
+停止，48–72 小时窗口没有取到数据；而这类故障历史上常在跑数小时、遇到特定负载之后
+才爆。仓库里 `docs/04-verification.md` 写了判定标准（48–72 小时零报错）与这次仍存在
+的反向证据：上游 issue #22583（GL-B3000 同症状）中有开发者称打完同样的中断修正
+**仍然复现**。所以本仓库给出的是“一个证据充分的候选修复 + 可复现的构建方法和验证
+方法”，不是“上游已盖章的终极答案”。
 
 ### 仓库结构
 
@@ -119,9 +120,9 @@ Copyright (C) 2026 yyefree
 
 ### 长跑记录与上游反馈
 
-- `docs/06-soak-report.md` — 逐小时巡检数据与判定进展（目前进行中）
+- `docs/06-soak-report.md` — 逐小时巡检数据（21 轮，止于 T+20h11m，采集已停止）
 - `docs/07-upstream-comment.md` — 给 openwrt#22583 的回帖草稿（**尚未发布**，
-  等 72 小时数据齐了再发）
+  数据不足以支撑结论，发布前需补一次实测）
 
 ---
 
@@ -145,12 +146,14 @@ prerequisites that keep a dual-slot device from being rolled back by U-Boot
 (`/etc/fw_env.config`, `config@mp02.1`, executable `/etc/init.d/uboot_env`),
 and tooling to tell whether the fix actually holds over 48–72 hours.
 
-**Status.** On the author's unit: interrupt now at `GIC-0 366` and counting,
-`HAL_REO` errors 0 for the first ~8 h, 2.4 GHz stable. Not yet conclusive —
-openwrt#22583 reports the same symptom persisting for another model after this
-patch, so treat it as a well-evidenced candidate fix, not a proven one.
+**Status.** On the author's unit: interrupt now at `GIC-0 366` and counting
+(189 events at T+20h), `HAL_REO` errors 0 across 21 hourly samples spanning
+20 h 11 m, 2.4 GHz stable, no U-Boot rollback. Data collection stopped there,
+so the 48 h / 72 h marks were not reached. Not yet conclusive — openwrt#22583
+reports the same symptom persisting for another model after this patch, so treat
+it as a well-evidenced candidate fix, not a proven one.
 
 GPL-2.0 licensed (see `LICENSE`), matching the OpenWrt ecosystem.
 
-- `docs/06-soak-report.md` — hourly soak data, in progress
+- `docs/06-soak-report.md` — hourly soak data, 21 samples, collection stopped at T+20h11m
 - `docs/07-upstream-comment.md` — draft reply for openwrt#22583 (**not posted yet**)
