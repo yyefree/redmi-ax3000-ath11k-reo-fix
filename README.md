@@ -121,8 +121,8 @@ Copyright (C) 2026 yyefree
 ### 长跑记录与上游反馈
 
 - `docs/06-soak-report.md` — 逐小时巡检数据（21 轮，止于 T+20h11m，采集已停止）
-- `docs/07-upstream-comment.md` — 给 openwrt#22583 的回帖草稿（**尚未发布**，
-  数据不足以支撑结论，发布前需补一次实测）
+- `docs/07-upstream-comment.md` — 已发布到 openwrt#22583 的数据回帖（原文与链接，
+  [issue comment](https://github.com/openwrt/openwrt/issues/22583#issuecomment-6765885787)）
 
 ---
 
@@ -156,4 +156,5 @@ it as a well-evidenced candidate fix, not a proven one.
 GPL-2.0 licensed (see `LICENSE`), matching the OpenWrt ecosystem.
 
 - `docs/06-soak-report.md` — hourly soak data, 21 samples, collection stopped at T+20h11m
-- `docs/07-upstream-comment.md` — draft reply for openwrt#22583 (**not posted yet**)
+- `docs/07-upstream-comment.md` — data point posted to openwrt#22583
+  ([comment link](https://github.com/openwrt/openwrt/issues/22583#issuecomment-6765885787))
